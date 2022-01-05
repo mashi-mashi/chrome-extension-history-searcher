@@ -1,0 +1,45 @@
+{
+  "name": "chex",
+  "version": "1.0.0",
+  "description": "chex",
+  "main": "index.js",
+  "scripts": {
+    "build": "webpack --mode production",
+    "dev": "webpack --mode development --watch",
+    "clean": "rm -rf dist",
+    "test": "npx jest",
+    "style": "prettier --write \"src/**/*.{ts,tsx}\""
+  },
+  "author": "",
+  "license": "MIT",
+  "dependencies": {
+    "@emotion/react": "^11.7.1",
+    "@emotion/styled": "^11.6.0",
+    "@mui/material": "^5.2.7",
+    "@mui/styled-engine-sc": "^5.1.0",
+    "axios": "^0.24.0",
+    "crx-hotreload": "^1.0.6",
+    "react": "^17.0.1",
+    "react-dom": "^17.0.1",
+    "react-hook-form": "^7.20.2",
+    "styled-components": "^5.3.3"
+  },
+  "devDependencies": {
+    "@types/axios": "^0.14.0",
+    "@types/chrome": "0.0.158",
+    "@types/jest": "^27.0.2",
+    "@types/react": "^17.0.0",
+    "@types/react-dom": "^17.0.0",
+    "copy-webpack-plugin": "^9.0.1",
+    "glob": "^7.1.6",
+    "jest": "^27.2.1",
+    "prettier": "^2.2.1",
+    "rimraf": "^3.0.2 ",
+    "ts-jest": "^27.0.5",
+    "ts-loader": "^8.0.0",
+    "typescript": "^4.4.3 ",
+    "webpack": "^5.0.0",
+    "webpack-cli": "^4.0.0",
+    "webpack-merge": "^5.0.0"
+  }
+}
