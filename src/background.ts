@@ -1,17 +1,26 @@
 import 'crx-hotreload'
-import { sendMessage } from 'webext-bridge'
+import Browser from 'webextension-polyfill'
 
 chrome.commands.onCommand.addListener(async (command) => {
   console.log(`Command: ${command}`)
+
   if (command === 'run-searcher') {
-    // chrome.runtime.sendMessage('open-app')
-    chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
+    chrome.tabs.query({ active: true, currentWindow: true }, async (tabs) => {
       const tab = tabs[0]
       if (tab?.id) {
-        chrome.tabs.sendMessage(tab.id, 'open-app')
+        const [histories, tabs] = await Promise.all([
+          Browser.history?.search({ maxResults: 10000, text: '' }),
+          Browser.tabs?.query({ active: true, currentWindow: true }),
+        ])
+
+        const message = {
+          histories: histories,
+          tabs: tabs,
+          task: 'open-app',
+        }
+        chrome.tabs.sendMessage(tab.id, JSON.stringify(message))
       }
     })
-    // await sendMessage('open-app', {})
   }
 
   return true

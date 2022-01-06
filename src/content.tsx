@@ -1,20 +1,18 @@
-import React, { useState } from 'react'
+import React from 'react'
 import ReactDOM from 'react-dom'
-import { onMessage } from 'webext-bridge'
-import { App } from './Main'
 import { SearchBox } from './page/SearchBox'
 ;(() => {
-  // const [open, setOpen] = useState(false)
+  // // const [open, setOpen] = useState(false)
 
-  // onMessage('open-app', async ({ data }) => {
-  //   console.log('open!!!!!!!!!!!!!!')
-  // })
+  // // onMessage('open-app', async ({ data }) => {
+  // //   console.log('open!!!!!!!!!!!!!!')
+  // // })
 
-  chrome.runtime.onMessage.addListener((request) => {
-    console.log('onnnnn2', request)
-    chrome.runtime.sendMessage('open-app')
-    return true
-  })
+  // chrome.runtime.onMessage.addListener(
+  //   async (message, sender, sendResponse) => {
+  //     return true
+  //   }
+  // )
 
   console.log('Launch')
   const app = document.createElement('div')
@@ -23,7 +21,6 @@ import { SearchBox } from './page/SearchBox'
 
   ReactDOM.render(
     <div>
-      {'tamuken'}
       <SearchBox />
     </div>,
     app

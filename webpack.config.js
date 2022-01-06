@@ -45,6 +45,9 @@ module.exports = {
         //   from: './public/content.html',
         //   to: './content.html',
         // },
+        {
+          from: 'node_modules/webextension-polyfill/dist/browser-polyfill.js',
+        }
       ],
     }),
   ],
