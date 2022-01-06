@@ -55,7 +55,7 @@ export const SearchBox = () => {
     [allHistory, searchText],
   );
 
-  const keyEventTrigger = useCallback((event) => {
+  const keyEventHandler = useCallback((event) => {
     // Esc
     if (event.keyCode === 27) {
       setOpen(false);
@@ -76,15 +76,16 @@ export const SearchBox = () => {
     });
   }, []);
 
-  const onEnterLinkPage = useCallback(
+  const onEnterHandler = useCallback(
     (event) => {
-      if (event.keyCode === 13) {
+      // open入れとかないとGoogle検索とかBindされる？
+      if (event.keyCode === 13 && open) {
         const url = results[selectedIndex]?.url;
         console.log(selectedIndex, url);
-        // window.open(url);
+        window.open(url);
       }
     },
-    [selectedIndex, results],
+    [selectedIndex, results, open],
   );
 
   const chromeMessageHandler = useCallback((request: any) => {
@@ -98,23 +99,20 @@ export const SearchBox = () => {
   }, []);
 
   useEffect(() => {
-    console.log('effect1');
-    document.addEventListener('keydown', keyEventTrigger, false);
+    document.addEventListener('keydown', keyEventHandler, false);
     chrome.runtime.onMessage.addListener(chromeMessageHandler);
     return () => {
-      document.removeEventListener('keydown', keyEventTrigger);
+      document.removeEventListener('keydown', keyEventHandler);
       chrome.runtime.onMessage.removeListener(chromeMessageHandler);
     };
   }, []);
 
   useEffect(() => {
-    document.addEventListener('keydown', onEnterLinkPage, false);
+    document.addEventListener('keydown', onEnterHandler);
     return () => {
-      document.removeEventListener('keydown', onEnterLinkPage);
+      document.removeEventListener('keydown', onEnterHandler);
     };
   }, [selectedIndex, results]);
-
-  useEffect(() => {}, []);
 
   return (
     <>
