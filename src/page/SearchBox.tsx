@@ -9,7 +9,7 @@ import {
   TextField,
   Typography,
 } from '@mui/material'
-import React, { useEffect, useMemo, useRef, useState } from 'react'
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 
 const CenterWrapper = styled.div`
   z-index: 10000; // うーん
@@ -20,7 +20,7 @@ const CenterWrapper = styled.div`
   border: 1px solid #d3d3d3;
   padding: 24px;
   border-radius: 12px;
-  top: 20vh;
+  top: 30vh;
   left: 50%;
   bottom: 0;
   margin: auto;
@@ -51,22 +51,10 @@ export const SearchBox = () => {
   const [currentTopLanguage, setCurrentTopLanguage] = useState('')
   const [allHistory, setAllHistory] = useState<chrome.history.HistoryItem[]>([])
   const [searchText, setSearchText] = useState('')
+  const [selectedIndex, setSelectedIndex] = useState(0)
 
   const ref = useRef<HTMLInputElement>(null)
-
-  useEffect(() => {
-    chrome.runtime.onMessage.addListener((request) => {
-      const message = safeParse<{ task: string; histories: any[] }>(request)
-      if (message?.task === 'open-app') {
-        setOpen((_open) => !_open)
-        setAllHistory(message.histories)
-        console.log('ref.current', ref.current)
-        ref.current?.focus()
-      }
-    })
-  }, [ref.current])
-
-  useEffect(() => {}, [])
+  const tableRef = useRef<HTMLTableElement>(null)
 
   const results = useMemo(
     () =>
@@ -79,6 +67,55 @@ export const SearchBox = () => {
         : [],
     [allHistory, searchText]
   )
+
+  const keyEventTrigger = useCallback((event) => {
+    // Esc
+    if (event.keyCode === 27) setOpen(false)
+    // 下
+    if (event.keyCode === 40) setSelectedIndex((prev) => prev + 1)
+    // 上
+    if (event.keyCode === 38)
+      setSelectedIndex((prev) => (prev > 0 ? prev - 1 : 0))
+  }, [])
+
+  const onEnterLinkPage = useCallback(
+    (event) => {
+      if (event.keyCode === 13) {
+        const url = results[selectedIndex]?.url
+        console.log(selectedIndex, url)
+        window.open(url)
+      }
+    },
+    [selectedIndex, results]
+  )
+
+  const chromeMessageHandler = useCallback((request: any) => {
+    const message = safeParse<{ task: string; histories: any[] }>(request)
+    if (message?.task === 'open-app') {
+      setOpen((_open) => !_open)
+      setAllHistory(message.histories)
+      console.log('ref.current', ref.current)
+      ref.current?.focus()
+    }
+  }, [])
+
+  useEffect(() => {
+    document.addEventListener('keydown', keyEventTrigger, false)
+    chrome.runtime.onMessage.addListener(chromeMessageHandler)
+    return () => {
+      document.removeEventListener('keydown', keyEventTrigger)
+      chrome.runtime.onMessage.removeListener(chromeMessageHandler)
+    }
+  }, [])
+
+  useEffect(() => {
+    document.addEventListener('keydown', onEnterLinkPage, false)
+    return () => {
+      document.removeEventListener('keydown', onEnterLinkPage)
+    }
+  }, [selectedIndex, results])
+
+  useEffect(() => {}, [])
 
   return (
     <>
@@ -97,6 +134,9 @@ export const SearchBox = () => {
                   const value = event.target?.value
                   if (value) {
                     setSearchText(value)
+                    setSelectedIndex(0)
+                  } else {
+                    setSearchText('')
                   }
                 }}
               />
@@ -105,10 +145,14 @@ export const SearchBox = () => {
               </div>
             </Flex>
             <TableContainer style={{ height: '85%' }}>
-              <Table>
+              <Table ref={tableRef}>
                 <TableBody>
-                  {results.map((row) => (
-                    <TableRow key={row.id}>
+                  {results.map((row, index) => (
+                    <TableRow
+                      key={row.id}
+                      selected={index === selectedIndex}
+                      hover={index === selectedIndex}
+                    >
                       <TableCell component="th" scope="row">
                         <Typography fontSize={'1rem'} fontWeight={'bold'}>
                           {row.title}
