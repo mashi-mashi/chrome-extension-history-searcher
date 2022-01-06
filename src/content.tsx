@@ -1,7 +1,9 @@
-import React from 'react'
-import ReactDOM from 'react-dom'
-import { SearchBox } from './page/SearchBox'
-;(() => {
+import React from 'react';
+import ReactDOM from 'react-dom';
+
+import { SearchBox } from './page/SearchBox';
+
+(() => {
   // // const [open, setOpen] = useState(false)
 
   // // onMessage('open-app', async ({ data }) => {
@@ -14,15 +16,15 @@ import { SearchBox } from './page/SearchBox'
   //   }
   // )
 
-  console.log('Launch')
-  const app = document.createElement('div')
-  app.id = 'chex-root'
-  document.body.appendChild(app)
+  console.log('Launch');
+  const app = document.createElement('div');
+  app.id = 'chex-root';
+  document.body.appendChild(app);
 
   ReactDOM.render(
     <div>
       <SearchBox />
     </div>,
-    app
-  )
-})()
+    app,
+  );
+})();
