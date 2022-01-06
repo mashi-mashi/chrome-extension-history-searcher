@@ -12,13 +12,29 @@
   //     "js": ["main.js"]
   //   }
   // ],
+  "commands": {
+    "run-searcher": {
+      "suggested_key": {
+        "default": "Ctrl+Shift+P",
+        "mac": "Command+Shift+2"
+      },
+      "description": "Run",
+      "global": true
+    }
+  },
+  "content_scripts": [
+    {
+      "matches": ["http://*/*", "https://*/*"],
+      "js": ["content.js"]
+    }
+  ],
   "permissions": [
     "tabs",
     "history",
-    "notifications",
-    "alarms",
+    "commands",
     "http://*/*",
-    "https://*/*"
+    "https://*/*",
+    "bookmarks"
   ],
   // "host_permissions": [
   //   "https://github-readme-stats.vercel.app/*"

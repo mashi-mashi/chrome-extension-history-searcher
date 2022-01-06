@@ -5,7 +5,8 @@ const CopyPlugin = require('copy-webpack-plugin')
 module.exports = {
   entry: {
     main: './src/Main.tsx',
-    background: './src/background.js',
+    content: './src/content.tsx',
+    background: './src/background.ts',
   },
   output: {
     path: __dirname + '/dist',
@@ -33,13 +34,17 @@ module.exports = {
     new CopyPlugin({
       patterns: [
         {
-          from: './manifest.json',
-          to: 'manifest.json',
+          from: './public/manifest.json',
+          to: './manifest.json',
         },
         {
-          from: './popup.html',
-          to: 'popup.html',
+          from: './public/popup.html',
+          to: './popup.html',
         },
+        // {
+        //   from: './public/content.html',
+        //   to: './content.html',
+        // },
       ],
     }),
   ],
