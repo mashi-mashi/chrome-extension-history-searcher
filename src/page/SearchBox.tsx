@@ -1,21 +1,6 @@
-import styled from "@emotion/styled";
-import {
-  Box,
-  Table,
-  TableBody,
-  TableCell,
-  TableContainer,
-  TableRow,
-  TextField,
-  Typography,
-} from "@mui/material";
-import React, {
-  useCallback,
-  useEffect,
-  useMemo,
-  useRef,
-  useState,
-} from "react";
+import styled from '@emotion/styled';
+import { Box, Table, TableBody, TableCell, TableContainer, TableRow, TextField, Typography } from '@mui/material';
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
 const CenterWrapper = styled.div`
   z-index: 10000; // うーん
@@ -46,18 +31,16 @@ const safeParse = <T extends any>(string: string) => {
   try {
     return JSON.parse(string) as T;
   } catch (e) {
-    console.warn("failed to parse message.", e);
+    console.warn('failed to parse message.', e);
   }
 };
 
 export const SearchBox = () => {
   const [open, setOpen] = useState(false);
-  const [currentStats, setCurrentStats] = useState("");
-  const [currentTopLanguage, setCurrentTopLanguage] = useState("");
-  const [allHistory, setAllHistory] = useState<chrome.history.HistoryItem[]>(
-    []
-  );
-  const [searchText, setSearchText] = useState("");
+  const [currentStats, setCurrentStats] = useState('');
+  const [currentTopLanguage, setCurrentTopLanguage] = useState('');
+  const [allHistory, setAllHistory] = useState<chrome.history.HistoryItem[]>([]);
+  const [searchText, setSearchText] = useState('');
   const [selectedIndex, setSelectedIndex] = useState(0);
 
   const ref = useRef<HTMLInputElement>(null);
@@ -67,73 +50,67 @@ export const SearchBox = () => {
   const results = useMemo(
     () =>
       allHistory
-        ? allHistory.filter((h) =>
-            searchText
-              ? h.title?.includes(searchText) || h.url?.includes(searchText)
-              : true
-          )
+        ? allHistory.filter((h) => (searchText ? h.title?.includes(searchText) || h.url?.includes(searchText) : true))
         : [],
-    [allHistory, searchText]
+    [allHistory, searchText],
   );
 
-  const keyEventTrigger = useCallback(
-    (event) => {
-      // Esc
-      if (event.keyCode === 27) setOpen(false);
-      // 下
-      if (event.keyCode === 40) {
-        setSelectedIndex((prev) => prev + 1);
-        // tableRef.current?.scrollIntoView(true)
-        console.log("t0", selectedIndex);
-        console.log("t0", tableRef.current?.offsetHeight);
-        console.log("t1", tableRowRef.current?.offsetHeight);
-        console.log("ref", tableRowRef.current);
-        tableRef.current?.scrollIntoView({
-          behavior: "smooth",
-          block: "end",
-        });
-      }
-      // 上
-      if (event.keyCode === 38)
-        setSelectedIndex((prev) => (prev > 0 ? prev - 1 : 0));
-    },
-    [tableRowRef.current]
-  );
+  const keyEventTrigger = useCallback((event) => {
+    // Esc
+    if (event.keyCode === 27) {
+      setOpen(false);
+      return;
+    }
+    // 下
+    if (event.keyCode === 40) {
+      setSelectedIndex((prev) => prev + 1);
+    }
+    // 上
+    if (event.keyCode === 38) {
+      setSelectedIndex((prev) => (prev > 0 ? prev - 1 : 0));
+    }
+
+    tableRowRef.current?.scrollIntoView({
+      behavior: 'smooth',
+      block: 'end',
+    });
+  }, []);
 
   const onEnterLinkPage = useCallback(
     (event) => {
       if (event.keyCode === 13) {
         const url = results[selectedIndex]?.url;
         console.log(selectedIndex, url);
-        window.open(url);
+        // window.open(url);
       }
     },
-    [selectedIndex, results]
+    [selectedIndex, results],
   );
 
   const chromeMessageHandler = useCallback((request: any) => {
     const message = safeParse<{ task: string; histories: any[] }>(request);
-    if (message?.task === "open-app") {
+    if (message?.task === 'open-app') {
       setOpen((_open) => !_open);
       setAllHistory(message.histories);
-      console.log("ref.current", ref.current);
+      console.log('ref.current', ref.current);
       ref.current?.focus();
     }
   }, []);
 
   useEffect(() => {
-    document.addEventListener("keydown", keyEventTrigger, false);
+    console.log('effect1');
+    document.addEventListener('keydown', keyEventTrigger, false);
     chrome.runtime.onMessage.addListener(chromeMessageHandler);
     return () => {
-      document.removeEventListener("keydown", keyEventTrigger);
+      document.removeEventListener('keydown', keyEventTrigger);
       chrome.runtime.onMessage.removeListener(chromeMessageHandler);
     };
   }, []);
 
   useEffect(() => {
-    document.addEventListener("keydown", onEnterLinkPage, false);
+    document.addEventListener('keydown', onEnterLinkPage, false);
     return () => {
-      document.removeEventListener("keydown", onEnterLinkPage);
+      document.removeEventListener('keydown', onEnterLinkPage);
     };
   }, [selectedIndex, results]);
 
@@ -158,7 +135,7 @@ export const SearchBox = () => {
                     setSearchText(value);
                     setSelectedIndex(0);
                   } else {
-                    setSearchText("");
+                    setSearchText('');
                   }
                 }}
               />
@@ -166,20 +143,20 @@ export const SearchBox = () => {
                 <Typography>{`${results.length} / ${allHistory.length}`}</Typography>
               </div>
             </Flex>
-            <TableContainer style={{ height: "85%" }}>
+            <TableContainer style={{ height: '85%' }}>
               <Table ref={tableRef}>
                 <TableBody>
                   {results.map((row, index) => (
                     <TableRow
                       key={row.id}
                       selected={index === selectedIndex}
-                      ref={tableRowRef}
+                      ref={index === selectedIndex ? tableRowRef : null}
                     >
                       <TableCell component="th" scope="row">
-                        <Typography fontSize={"1rem"} fontWeight={"bold"}>
+                        <Typography fontSize={'1rem'} fontWeight={'bold'}>
                           {row.title}
                         </Typography>
-                        <Typography fontSize={"0.7rem"}>{row.url}</Typography>
+                        <Typography fontSize={'0.7rem'}>{row.url}</Typography>
                       </TableCell>
                     </TableRow>
                   ))}
@@ -189,7 +166,7 @@ export const SearchBox = () => {
           </Box>
         </CenterWrapper>
       ) : (
-        <div style={{ display: "none" }}></div>
+        <div style={{ display: 'none' }}></div>
       )}
     </>
   );
