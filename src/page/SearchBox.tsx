@@ -1,12 +1,10 @@
 import styled from '@emotion/styled'
 import {
   Box,
-  Paper,
   Table,
   TableBody,
   TableCell,
   TableContainer,
-  TableHead,
   TableRow,
   TextField,
   Typography,
@@ -54,7 +52,7 @@ export const SearchBox = () => {
   const [allHistory, setAllHistory] = useState<chrome.history.HistoryItem[]>([])
   const [searchText, setSearchText] = useState('')
 
-  const ref = useRef(null)
+  const ref = useRef<HTMLInputElement>(null)
 
   useEffect(() => {
     chrome.runtime.onMessage.addListener((request) => {
@@ -62,9 +60,11 @@ export const SearchBox = () => {
       if (message?.task === 'open-app') {
         setOpen((_open) => !_open)
         setAllHistory(message.histories)
+        console.log('ref.current', ref.current)
+        ref.current?.focus()
       }
     })
-  }, [])
+  }, [ref.current])
 
   useEffect(() => {}, [])
 
@@ -91,7 +91,7 @@ export const SearchBox = () => {
             </Box> */}
             <Flex>
               <TextField
-                ref={ref}
+                inputRef={ref}
                 style={{ flex: 5 }}
                 onChange={(event) => {
                   const value = event.target?.value
