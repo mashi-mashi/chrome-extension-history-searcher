@@ -85,7 +85,6 @@ const defaultMuiThemeOptions: MuiThemeOptions = {
     MuiCssBaseline: {
       styleOverrides: {
         fontFamily: [`Noto Sans CJK JP`].join(','),
-        backgroundColor: 'red',
       },
     },
   },

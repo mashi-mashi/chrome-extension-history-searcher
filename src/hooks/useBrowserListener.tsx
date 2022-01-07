@@ -1,5 +1,7 @@
 import { useCallback, useEffect, useState } from 'react';
 
+import { MessageTasksType } from '../util/constant';
+
 const safeParse = <T extends any>(string: string) => {
   try {
     return JSON.parse(string) as T;
@@ -8,7 +10,10 @@ const safeParse = <T extends any>(string: string) => {
   }
 };
 
-export const useBrowserListener = <T extends { task: string }>(taskName: string, callback?: () => void) => {
+export const useBrowserListener = <T extends { task: MessageTasksType }>(
+  taskName: MessageTasksType,
+  callback?: () => void,
+) => {
   const [message, setMessage] = useState<T>();
 
   const chromeMessageHandler = useCallback((request: any) => {

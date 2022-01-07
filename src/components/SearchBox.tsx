@@ -1,7 +1,9 @@
 import styled from '@emotion/styled';
+import SearchIcon from '@mui/icons-material/Search';
 import {
   Avatar,
   Badge,
+  Box,
   Table,
   TableBody,
   TableCell,
@@ -13,24 +15,24 @@ import {
 import { withStyles } from '@mui/styles';
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
-import { useBrowserListener } from '../hooks/useBroserListener';
+import { useBrowserListener } from '../hooks/useBrowserListener';
+import { useBrowserRuntime } from '../hooks/useBrowserRuntime';
 import { useDebounceValue } from '../hooks/useDebounse';
 import { useFuse } from '../hooks/useFuse';
+import { MessageTasks, MessageTasksType } from '../util/constant';
+import { Spacer } from './Spacer';
 
 const CenterWrapper = styled.div`
   z-index: 10000; // うーん
   width: 720px;
-  height: 500px;
+  max-height: 520px;
   position: fixed;
   background-color: white;
-  border: 1px solid #d3d3d3;
-  padding: 24px;
+  border: 1.5px solid #d3d3d3;
+  padding: 20px;
   border-radius: 12px;
-  top: 40%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  -webkit-transform: translate(-50%, -50%);
-  -ms-transform: translate(-50%, -50%);
+  top: 10%;
+  left: 30%;
 `;
 
 const Flex = styled.div`
@@ -45,13 +47,13 @@ type RowType = {
   url: string;
   title: string;
   faviconUrl: string;
-  type: string;
+  type: 'tab' | 'history';
   visitCount?: number;
 };
 
 const StyledTableRow = withStyles({
   root: {
-    height: 32,
+    height: 64,
   },
 })(TableRow);
 
@@ -63,15 +65,20 @@ const StyledTableCell = withStyles({
 
 export const BrowserHistorySearch = React.memo(() => {
   const [open, setOpen] = useState(false);
-  const { message } = useBrowserListener<{ task: string; histories: any[] }>('open-app', () =>
-    setOpen((prev) => !prev),
+  const { message } = useBrowserListener<{ task: MessageTasksType; histories: any[]; tabs: any[] }>(
+    MessageTasks.openApp,
+    () => setOpen((prev) => !prev),
   );
 
   return (
     <>
       {open && message?.histories?.length ? (
         <CenterWrapper>
-          <SearchBox allHistory={message?.histories || []} open={open} onClose={() => setOpen(false)} />
+          <SearchBox
+            allHistory={[...message?.histories, ...message?.tabs] || []}
+            open={open}
+            onClose={() => setOpen(false)}
+          />
         </CenterWrapper>
       ) : (
         <></>
@@ -91,6 +98,7 @@ const SearchBox = React.memo<{
     isCaseSensitive: false,
     shouldSort: true,
   });
+  const { sendMessage } = useBrowserRuntime(MessageTasks.changeTab);
 
   const [selectedIndex, setSelectedIndex] = useState(0);
   const inputRef = useRef<HTMLInputElement>(null);
@@ -120,7 +128,7 @@ const SearchBox = React.memo<{
       }
       // 下
       if (event.keyCode === 40) {
-        setSelectedIndex((prev) => prev + 1);
+        setSelectedIndex((prev) => (prev < 10 ? prev + 1 : 10));
       }
       // 上
       if (event.keyCode === 38) {
@@ -138,12 +146,20 @@ const SearchBox = React.memo<{
     (event) => {
       // open入れとかないとGoogle検索とかBindされる？
       if (event.keyCode === 13 && open) {
-        console.log(event);
-        const url = results[selectedIndex]?.url;
-        window.open(url);
+        const selected = results[selectedIndex];
+        if (!selected) return;
+
+        const url = selected.url;
+        const type = selected.type;
+
+        type === 'tab'
+          ? sendMessage({
+              tabId: Number(selected.id),
+            })
+          : window.open(url);
       }
     },
-    [open, results, selectedIndex],
+    [open, results, selectedIndex, sendMessage],
   );
 
   useEffect(() => {
@@ -167,50 +183,64 @@ const SearchBox = React.memo<{
   return (
     <>
       <Flex>
-        <TextField
-          inputRef={inputRef}
-          sx={{ flex: 5, fontSize: 14 }}
-          onChange={onChangeSearchText}
-          value={searchText}
-        />
+        <Box sx={{ display: 'flex', alignItems: 'flex-end', width: '100%' }}>
+          <SearchIcon sx={{ mr: 1 }} />
+          <TextField
+            sx={{ fontSize: 20 }}
+            inputRef={inputRef}
+            variant="standard"
+            onChange={onChangeSearchText}
+            value={searchText}
+            fullWidth
+          />
+        </Box>
         {/* <Typography sx={{ flex: 1 }}>{`${results.length} / ${allHistory.length}`}</Typography> */}
       </Flex>
-      <TableContainer sx={{ height: '85%' }}>
-        <Table>
-          <TableBody>
-            {results.map((row, index) => {
-              return (
-                <StyledTableRow
-                  key={row.id}
-                  selected={index === selectedIndex}
-                  ref={index === selectedIndex ? tableRowRef : null}
-                  onClick={() => {
-                    setSelectedIndex(index); // 一応セレクトさせておく
-                    window.open(row.url);
-                  }}
-                >
-                  <StyledTableCell>
-                    <Badge
-                      sx={{ alignItems: 'center', width: 30, height: 30 }}
-                      overlap="circular"
-                      anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
-                      badgeContent={<>{row.visitCount}</>}
+      {results.length ? (
+        <>
+          <Spacer size={12} />
+          <TableContainer
+            sx={{
+              maxHeight: 400,
+            }}
+          >
+            <Table>
+              <TableBody>
+                {results.map((row, index) => {
+                  return (
+                    <StyledTableRow
+                      key={row.id}
+                      selected={index === selectedIndex}
+                      ref={index === selectedIndex ? tableRowRef : null}
+                      onClick={() => {
+                        setSelectedIndex(index); // 一応セレクトさせておく
+                        window.open(row.url);
+                      }}
                     >
-                      <Avatar sx={{ width: 16, height: 16 }} src={`${row.faviconUrl}`} />
-                    </Badge>
-                  </StyledTableCell>
-                  <StyledTableCell component="th" scope="row">
-                    <Typography fontSize={'14px'} fontWeight={'bold'}>
-                      {row.title}
-                    </Typography>
-                    <Typography fontSize={'8px'}>{row.url}</Typography>
-                  </StyledTableCell>
-                </StyledTableRow>
-              );
-            })}
-          </TableBody>
-        </Table>
-      </TableContainer>
+                      <StyledTableCell>
+                        <Badge sx={{ justifyContent: 'center', alignItems: 'center', width: 40, height: 40 }}>
+                          <Avatar sx={{ width: 20, height: 20 }} src={`${row.faviconUrl}`} />
+                        </Badge>
+                      </StyledTableCell>
+                      <StyledTableCell>
+                        <Typography fontSize={'8px'}>{row.type}</Typography>
+                      </StyledTableCell>
+                      <StyledTableCell component="th" scope="row">
+                        <Typography fontSize={'14px'} fontWeight={'bold'}>
+                          {row.title}
+                        </Typography>
+                        <Typography fontSize={'8px'}>{row.url}</Typography>
+                      </StyledTableCell>
+                    </StyledTableRow>
+                  );
+                })}
+              </TableBody>
+            </Table>
+          </TableContainer>
+        </>
+      ) : (
+        <></>
+      )}
     </>
   );
 });

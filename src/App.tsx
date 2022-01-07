@@ -8,7 +8,7 @@ import { defaultMuiTheme } from './util/style';
 export const App = () => (
   <>
     <ThemeProvider theme={defaultMuiTheme}>
-      <CssBaseline />
+      {/* <CssBaseline /> */}
       <BrowserHistorySearch />
     </ThemeProvider>
   </>

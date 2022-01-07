@@ -1,6 +1,8 @@
 import 'crx-hotreload';
 import Browser from 'webextension-polyfill';
 
+import { MessageTasks } from './util/constant';
+
 const uniqueArray = <T extends any>(array: T[], key: keyof T) =>
   Array.from(new Map(array.map((o) => [o[key], o])).values());
 
@@ -16,7 +18,7 @@ chrome.commands.onCommand.addListener(async (command) => {
       if (tab?.id) {
         const [histories, tabs] = await Promise.all([
           Browser.history?.search({ maxResults: 10000, text: '' }),
-          Browser.tabs?.query({ active: true, currentWindow: true }),
+          Browser.tabs?.query({}),
         ]);
 
         const message = {
@@ -33,7 +35,7 @@ chrome.commands.onCommand.addListener(async (command) => {
           ),
           tabs: uniqueArray(
             tabs.map((tab) => ({
-              id: tab.id,
+              id: String(tab.id), // TabはIdがNumber
               url: tab.url,
               title: tab.title,
               faviconUrl: createFavicon(tab.url),
@@ -41,7 +43,7 @@ chrome.commands.onCommand.addListener(async (command) => {
             })),
             'url',
           ),
-          task: 'open-app',
+          task: MessageTasks.openApp,
         };
         chrome.tabs.sendMessage(tab.id, JSON.stringify(message));
       }
@@ -49,4 +51,11 @@ chrome.commands.onCommand.addListener(async (command) => {
   }
 
   return true;
+});
+
+chrome.runtime.onMessage.addListener(async (request) => {
+  if (request.task === MessageTasks.changeTab) {
+    const tabId = request.tabId;
+    chrome.tabs.update(tabId, { active: true });
+  }
 });
