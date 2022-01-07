@@ -1,5 +1,15 @@
 import styled from '@emotion/styled';
-import { Box, Table, TableBody, TableCell, TableContainer, TableRow, TextField, Typography } from '@mui/material';
+import {
+  Avatar,
+  Box,
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableRow,
+  TextField,
+  Typography,
+} from '@mui/material';
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
 const CenterWrapper = styled.div`
@@ -39,7 +49,15 @@ export const SearchBox = () => {
   const [open, setOpen] = useState(false);
   const [currentStats, setCurrentStats] = useState('');
   const [currentTopLanguage, setCurrentTopLanguage] = useState('');
-  const [allHistory, setAllHistory] = useState<chrome.history.HistoryItem[]>([]);
+  const [allHistory, setAllHistory] = useState<
+    {
+      id: string;
+      url: string;
+      title: string;
+      faviconUrl: string;
+      type: string;
+    }[]
+  >([]);
   const [searchText, setSearchText] = useState('');
   const [selectedIndex, setSelectedIndex] = useState(0);
 
@@ -80,7 +98,6 @@ export const SearchBox = () => {
       // open入れとかないとGoogle検索とかBindされる？
       if (event.keyCode === 13 && open) {
         const url = results[selectedIndex]?.url;
-        console.log(selectedIndex, url);
         window.open(url);
       }
     },
@@ -89,10 +106,11 @@ export const SearchBox = () => {
 
   const chromeMessageHandler = useCallback((request: any) => {
     const message = safeParse<{ task: string; histories: any[] }>(request);
+
     if (message?.task === 'open-app') {
       setOpen((_open) => !_open);
+      console.log(message.histories);
       setAllHistory(message.histories);
-      console.log('ref.current', ref.current);
       ref.current?.focus();
     }
   }, []);
@@ -100,6 +118,7 @@ export const SearchBox = () => {
   useEffect(() => {
     document.addEventListener('keydown', keyEventHandler, false);
     chrome.runtime.onMessage.addListener(chromeMessageHandler);
+
     return () => {
       document.removeEventListener('keydown', keyEventHandler);
       chrome.runtime.onMessage.removeListener(chromeMessageHandler);
@@ -117,53 +136,54 @@ export const SearchBox = () => {
     <>
       {open ? (
         <CenterWrapper>
-          <Box width="100%" height="100%">
-            {/* <Box p={5}>
+          {/* <Box p={5}>
               <div dangerouslySetInnerHTML={{ __html: currentStats }} />
               <div dangerouslySetInnerHTML={{ __html: currentTopLanguage }} />
             </Box> */}
-            <Flex>
-              <TextField
-                inputRef={ref}
-                style={{ flex: 5 }}
-                onChange={(event) => {
-                  const value = event.target?.value;
-                  if (value) {
-                    setSearchText(value);
-                    setSelectedIndex(0);
-                  } else {
-                    setSearchText('');
-                  }
-                }}
-              />
-              <div style={{ flex: 1 }}>
-                <Typography>{`${results.length} / ${allHistory.length}`}</Typography>
-              </div>
-            </Flex>
-            <TableContainer style={{ height: '85%' }}>
-              <Table ref={tableRef}>
-                <TableBody>
-                  {results.map((row, index) => (
-                    <TableRow
-                      key={row.id}
-                      selected={index === selectedIndex}
-                      ref={index === selectedIndex ? tableRowRef : null}
-                    >
-                      <TableCell component="th" scope="row">
-                        <Typography fontSize={'1rem'} fontWeight={'bold'}>
-                          {row.title}
-                        </Typography>
-                        <Typography fontSize={'0.7rem'}>{row.url}</Typography>
-                      </TableCell>
-                    </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
-            </TableContainer>
-          </Box>
+          <Flex>
+            <TextField
+              inputRef={ref}
+              style={{ flex: 5 }}
+              onChange={(event) => {
+                const value = event.target?.value;
+                if (value) {
+                  setSearchText(value);
+                  setSelectedIndex(0);
+                } else {
+                  setSearchText('');
+                }
+              }}
+            />
+            <div style={{ flex: 1 }}>
+              <Typography>{`${results.length} / ${allHistory.length}`}</Typography>
+            </div>
+          </Flex>
+          <TableContainer style={{ height: '85%' }}>
+            <Table ref={tableRef}>
+              <TableBody>
+                {results.map((row, index) => (
+                  <TableRow
+                    key={row.id}
+                    selected={index === selectedIndex}
+                    ref={index === selectedIndex ? tableRowRef : null}
+                  >
+                    <TableCell>
+                      <Avatar sx={{ width: 16, height: 16 }} src={`${row.faviconUrl}`} />
+                    </TableCell>
+                    <TableCell component="th" scope="row">
+                      <Typography fontSize={'14px'} fontWeight={'bold'}>
+                        {row.title}
+                      </Typography>
+                      <Typography fontSize={'8px'}>{row.url}</Typography>
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          </TableContainer>
         </CenterWrapper>
       ) : (
-        <div style={{ display: 'none' }}></div>
+        <></>
       )}
     </>
   );

@@ -1,6 +1,12 @@
 import 'crx-hotreload';
 import Browser from 'webextension-polyfill';
 
+const uniqueArray = <T extends any>(array: T[], key: keyof T) =>
+  Array.from(new Map(array.map((o) => [o[key], o])).values());
+
+const createFavicon = (url?: string) =>
+  url ? `https://www.google.com/s2/favicons?domain=${new URL(url).hostname}` : '';
+
 chrome.commands.onCommand.addListener(async (command) => {
   console.log(`Command: ${command}`);
 
@@ -14,8 +20,26 @@ chrome.commands.onCommand.addListener(async (command) => {
         ]);
 
         const message = {
-          histories: histories,
-          tabs: tabs,
+          histories: uniqueArray(
+            histories.map((history) => ({
+              id: history.id,
+              url: history.url,
+              title: history.title,
+              faviconUrl: createFavicon(history.url),
+              type: 'history',
+            })),
+            'url',
+          ),
+          tabs: uniqueArray(
+            tabs.map((tab) => ({
+              id: tab.id,
+              url: tab.url,
+              title: tab.title,
+              faviconUrl: createFavicon(tab.url),
+              type: 'tab',
+            })),
+            'url',
+          ),
           task: 'open-app',
         };
         chrome.tabs.sendMessage(tab.id, JSON.stringify(message));

@@ -1,7 +1,7 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 
-import { SearchBox } from './page/SearchBox';
+import { App } from './App';
 
 (() => {
   // // const [open, setOpen] = useState(false)
@@ -21,10 +21,5 @@ import { SearchBox } from './page/SearchBox';
   app.id = 'chex-root';
   document.body.appendChild(app);
 
-  ReactDOM.render(
-    <div>
-      <SearchBox />
-    </div>,
-    app,
-  );
+  ReactDOM.render(<App />, app);
 })();
