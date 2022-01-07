@@ -52,6 +52,7 @@ module.exports = {
     'no-unused-vars': 'warn',
 
     'react-hooks/rules-of-hooks': 'error',
+    'react-hooks/exhaustive-deps': 'warn',
     'react/jsx-boolean-value': ['error', 'never'],
     'react/jsx-filename-extension': ['error', { extensions: ['.jsx', '.tsx'] }],
     'react/react-in-jsx-scope': 'off',
