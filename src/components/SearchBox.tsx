@@ -10,7 +10,9 @@ import {
   TextField,
   Typography,
 } from '@mui/material';
-import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
+
+import { useFuse } from '../hooks/useFuse';
 
 const CenterWrapper = styled.div`
   z-index: 10000; // うーん
@@ -43,30 +45,43 @@ const safeParse = <T extends any>(string: string) => {
   }
 };
 
+type RowType = {
+  id: string;
+  url: string;
+  title: string;
+  faviconUrl: string;
+  type: string;
+  visitCount?: number;
+};
+
 export const SearchBox = () => {
   const [open, setOpen] = useState(false);
-  const [allHistory, setAllHistory] = useState<
-    {
-      id: string;
-      url: string;
-      title: string;
-      faviconUrl: string;
-      type: string;
-      visitCount?: number;
-    }[]
-  >([]);
-  const [searchText, setSearchText] = useState('');
+  const [allHistory, setAllHistory] = useState<RowType[]>([]);
+  const [results, setResults] = useState<RowType[]>([]);
+  const { search, setList } = useFuse<RowType>({
+    keys: ['url', 'title'],
+    includeScore: true,
+    isCaseSensitive: false,
+    shouldSort: true,
+  });
+
   const [selectedIndex, setSelectedIndex] = useState(0);
 
   const ref = useRef<HTMLInputElement>(null);
   const tableRowRef = useRef<HTMLTableRowElement>(null);
 
-  const results = useMemo(
-    () =>
-      allHistory
-        ? allHistory.filter((h) => (searchText ? h.title?.includes(searchText) || h.url?.includes(searchText) : true))
-        : [],
-    [allHistory, searchText],
+  const onChangeSearchText = useCallback(
+    (event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+      const value = event.target?.value;
+      if (value) {
+        setResults(search(value).flatMap((d) => d.item));
+        // 値を変えたらリセット
+        setSelectedIndex(0);
+      } else {
+        setResults(search('h').flatMap((d) => d.item));
+      }
+    },
+    [search],
   );
 
   const keyEventHandler = useCallback((event) => {
@@ -106,9 +121,12 @@ export const SearchBox = () => {
     if (message?.task === 'open-app') {
       setOpen((_open) => !_open);
       setAllHistory(message.histories);
+      setResults(message.histories);
+      setList(message.histories);
       // テキストボックスにフォーカスさせる
       ref.current?.focus();
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   useEffect(() => {
@@ -130,25 +148,10 @@ export const SearchBox = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedIndex, results]);
 
-  const onChangeSearchText = useCallback((event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-    const value = event.target?.value;
-    if (value) {
-      setSearchText(value);
-      // 値を変えたらリセット
-      setSelectedIndex(0);
-    } else {
-      setSearchText('');
-    }
-  }, []);
-
   return (
     <>
       {open ? (
         <CenterWrapper>
-          {/* <Box p={5}>
-              <div dangerouslySetInnerHTML={{ __html: currentStats }} />
-              <div dangerouslySetInnerHTML={{ __html: currentTopLanguage }} />
-            </Box> */}
           <Flex>
             <TextField inputRef={ref} sx={{ flex: 5 }} onChange={onChangeSearchText} />
             <Typography sx={{ flex: 1 }}>{`${results.length} / ${allHistory.length}`}</Typography>
