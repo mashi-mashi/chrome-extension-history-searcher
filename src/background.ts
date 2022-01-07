@@ -1,5 +1,5 @@
 import 'crx-hotreload';
-import Browser from 'webextension-polyfill';
+import Browser, { browserSettings } from 'webextension-polyfill';
 
 const uniqueArray = <T extends any>(array: T[], key: keyof T) =>
   Array.from(new Map(array.map((o) => [o[key], o])).values());
@@ -26,6 +26,7 @@ chrome.commands.onCommand.addListener(async (command) => {
               url: history.url,
               title: history.title,
               faviconUrl: createFavicon(history.url),
+              visitCount: history.visitCount,
               type: 'history',
             })),
             'url',

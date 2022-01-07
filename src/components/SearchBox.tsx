@@ -1,5 +1,15 @@
 import styled from '@emotion/styled';
-import { Avatar, Table, TableBody, TableCell, TableContainer, TableRow, TextField, Typography } from '@mui/material';
+import {
+  Avatar,
+  Badge,
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableRow,
+  TextField,
+  Typography,
+} from '@mui/material';
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
 const CenterWrapper = styled.div`
@@ -42,6 +52,7 @@ export const SearchBox = () => {
       title: string;
       faviconUrl: string;
       type: string;
+      visitCount?: number;
     }[]
   >([]);
   const [searchText, setSearchText] = useState('');
@@ -156,7 +167,14 @@ export const SearchBox = () => {
                     }}
                   >
                     <TableCell>
-                      <Avatar sx={{ width: 16, height: 16 }} src={`${row.faviconUrl}`} />
+                      <Badge
+                        sx={{ alignItems: 'center', width: 40, height: 40 }}
+                        overlap="circular"
+                        anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
+                        badgeContent={<>{row.visitCount}</>}
+                      >
+                        <Avatar sx={{ width: 20, height: 20 }} src={`${row.faviconUrl}`} />
+                      </Badge>
                     </TableCell>
                     <TableCell component="th" scope="row">
                       <Typography fontSize={'14px'} fontWeight={'bold'}>
