@@ -1,5 +1,5 @@
 import 'crx-hotreload';
-import Browser, { browserSettings } from 'webextension-polyfill';
+import Browser from 'webextension-polyfill';
 
 const uniqueArray = <T extends any>(array: T[], key: keyof T) =>
   Array.from(new Map(array.map((o) => [o[key], o])).values());

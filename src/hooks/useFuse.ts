@@ -1,15 +1,15 @@
 import Fuse from 'fuse.js';
 import * as React from 'react';
 
-export const useFuse = <T>(options: Fuse.IFuseOptions<T> = { includeScore: true }) => {
-  const [list, setList] = React.useState<T[]>([]);
+export const useFuse = <T>(origin: T[], options: Fuse.IFuseOptions<T> = { includeScore: true }) => {
+  const fuse = React.useMemo(() => new Fuse(origin, options), [options, origin]);
 
   const search = React.useCallback(
-    (text: string) => {
-      return new Fuse(list, options).search(text);
+    (text: string, searchOptions: Fuse.FuseSearchOptions = { limit: 10 }) => {
+      return fuse.search(text, searchOptions);
     },
-    [list, options],
+    [fuse],
   );
 
-  return { search, setList };
+  return { search };
 };
