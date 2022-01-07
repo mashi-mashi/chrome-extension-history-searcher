@@ -71,7 +71,6 @@ export const SearchBox = () => {
     }
 
     tableRowRef.current?.scrollIntoView({
-      behavior: 'smooth',
       block: 'end',
     });
   }, []);
