@@ -94,7 +94,6 @@ export const SearchBox = () => {
 
     if (message?.task === 'open-app') {
       setOpen((_open) => !_open);
-      console.log(message.histories);
       setAllHistory(message.histories);
       // テキストボックスにフォーカスさせる
       ref.current?.focus();
