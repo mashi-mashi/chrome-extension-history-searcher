@@ -1,30 +1,18 @@
 import styled from '@emotion/styled';
-import {
-  Avatar,
-  Box,
-  Table,
-  TableBody,
-  TableCell,
-  TableContainer,
-  TableRow,
-  TextField,
-  Typography,
-} from '@mui/material';
+import { Avatar, Table, TableBody, TableCell, TableContainer, TableRow, TextField, Typography } from '@mui/material';
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
 const CenterWrapper = styled.div`
   z-index: 10000; // うーん
   width: 720px;
   height: 500px;
-  position: absolute;
+  position: fixed;
   background-color: white;
   border: 1px solid #d3d3d3;
   padding: 24px;
   border-radius: 12px;
-  top: 30vh;
+  top: 30%;
   left: 50%;
-  bottom: 0;
-  margin: auto;
   transform: translate(-50%, -50%);
   -webkit-transform: translate(-50%, -50%);
   -ms-transform: translate(-50%, -50%);
@@ -47,8 +35,6 @@ const safeParse = <T extends any>(string: string) => {
 
 export const SearchBox = () => {
   const [open, setOpen] = useState(false);
-  const [currentStats, setCurrentStats] = useState('');
-  const [currentTopLanguage, setCurrentTopLanguage] = useState('');
   const [allHistory, setAllHistory] = useState<
     {
       id: string;
@@ -111,6 +97,7 @@ export const SearchBox = () => {
       setOpen((_open) => !_open);
       console.log(message.histories);
       setAllHistory(message.histories);
+      // テキストボックスにフォーカスさせる
       ref.current?.focus();
     }
   }, []);
@@ -123,6 +110,7 @@ export const SearchBox = () => {
       document.removeEventListener('keydown', keyEventHandler);
       chrome.runtime.onMessage.removeListener(chromeMessageHandler);
     };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   useEffect(() => {
@@ -130,7 +118,19 @@ export const SearchBox = () => {
     return () => {
       document.removeEventListener('keydown', onEnterHandler);
     };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [selectedIndex, results]);
+
+  const onChangeSearchText = useCallback((event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+    const value = event.target?.value;
+    if (value) {
+      setSearchText(value);
+      // 値を変えたらリセット
+      setSelectedIndex(0);
+    } else {
+      setSearchText('');
+    }
+  }, []);
 
   return (
     <>
@@ -141,24 +141,10 @@ export const SearchBox = () => {
               <div dangerouslySetInnerHTML={{ __html: currentTopLanguage }} />
             </Box> */}
           <Flex>
-            <TextField
-              inputRef={ref}
-              style={{ flex: 5 }}
-              onChange={(event) => {
-                const value = event.target?.value;
-                if (value) {
-                  setSearchText(value);
-                  setSelectedIndex(0);
-                } else {
-                  setSearchText('');
-                }
-              }}
-            />
-            <div style={{ flex: 1 }}>
-              <Typography>{`${results.length} / ${allHistory.length}`}</Typography>
-            </div>
+            <TextField inputRef={ref} sx={{ flex: 5 }} onChange={onChangeSearchText} />
+            <Typography sx={{ flex: 1 }}>{`${results.length} / ${allHistory.length}`}</Typography>
           </Flex>
-          <TableContainer style={{ height: '85%' }}>
+          <TableContainer sx={{ height: '85%' }}>
             <Table ref={tableRef}>
               <TableBody>
                 {results.map((row, index) => (
