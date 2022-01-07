@@ -48,7 +48,6 @@ export const SearchBox = () => {
   const [selectedIndex, setSelectedIndex] = useState(0);
 
   const ref = useRef<HTMLInputElement>(null);
-  const tableRef = useRef<HTMLTableElement>(null);
   const tableRowRef = useRef<HTMLTableRowElement>(null);
 
   const results = useMemo(
@@ -145,13 +144,17 @@ export const SearchBox = () => {
             <Typography sx={{ flex: 1 }}>{`${results.length} / ${allHistory.length}`}</Typography>
           </Flex>
           <TableContainer sx={{ height: '85%' }}>
-            <Table ref={tableRef}>
+            <Table>
               <TableBody>
                 {results.map((row, index) => (
                   <TableRow
                     key={row.id}
                     selected={index === selectedIndex}
                     ref={index === selectedIndex ? tableRowRef : null}
+                    onClick={() => {
+                      setSelectedIndex(index); // 一応セレクトさせておく
+                      window.open(row.url);
+                    }}
                   >
                     <TableCell>
                       <Avatar sx={{ width: 16, height: 16 }} src={`${row.faviconUrl}`} />
