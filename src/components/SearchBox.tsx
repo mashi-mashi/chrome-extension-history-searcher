@@ -24,7 +24,8 @@ import { Spacer } from './Spacer';
 
 const CenterWrapper = styled.div`
   z-index: 10000; // うーん
-  width: 720px;
+  min-width: 360px;
+  max-width: 720px;
   max-height: 520px;
   position: fixed;
   background-color: white;
@@ -33,6 +34,9 @@ const CenterWrapper = styled.div`
   border-radius: 12px;
   top: 10%;
   left: 30%;
+  @media (max-width: 1024px) {
+    left: 10%;
+  }
 `;
 
 const Flex = styled.div`
