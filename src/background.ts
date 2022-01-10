@@ -58,7 +58,22 @@ chrome.commands.onCommand.addListener(async (command) => {
       const allTabs = await Browser.tabs.query({});
       console.log('tabs', tabs.length, tabs);
 
-      chrome.tabs.sendMessage(tab.id, JSON.stringify({ tabs: allTabs, task: MessageTasks.listTabs }));
+      chrome.tabs.sendMessage(
+        tab.id,
+        JSON.stringify({
+          tabs: uniqueArray(
+            allTabs.map((tab) => ({
+              id: String(tab.id), // TabはIdがNumber
+              url: tab.url,
+              title: tab.title,
+              faviconUrl: createFavicon(tab.url),
+              type: 'tab',
+            })),
+            'url',
+          ),
+          task: MessageTasks.listTabs,
+        }),
+      );
     });
   }
 

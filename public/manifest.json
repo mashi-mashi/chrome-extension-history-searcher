@@ -1,6 +1,6 @@
 {
   "manifest_version": 2,
-  "name": "d",
+  "name": "history-searcher",
   "description": "ddd",
   "version": "1",
   "browser_action": {
@@ -16,18 +16,18 @@
     "run-searcher": {
       "suggested_key": {
         "default": "Ctrl+Shift+P",
-        "mac": "Command+Shift+2"
+        "mac": "Command+Shift+P"
       },
       "description": "Run",
       "global": true
-    },
-    "list-tabs": {
-      "suggested_key": {
-        "default": "Ctrl+Shift+3",
-        "mac": "Command+Shift+L"
-      },
-      "description": "list tabs"
     }
+    // "list-tabs": {
+    //   "suggested_key": {
+    //     "default": "Ctrl+Shift+3",
+    //     "mac": "Command+Shift+L"
+    //   },
+    //   "description": "list tabs"
+    // }
   },
   "content_scripts": [
     {

@@ -68,28 +68,34 @@ const StyledTableCell = withStyles({
 })(TableCell);
 
 export const BrowserHistorySearch = React.memo(() => {
-  const [open, setOpen] = useState(false);
+  const [historyOpen, setHistoryOpen] = useState(false);
+  const [tabOpen, setTabOpen] = useState(false);
   const { message } = useBrowserListener<{ task: MessageTasksType; histories: any[]; tabs: any[] }>(
     MessageTasks.openApp,
-    () => setOpen((prev) => !prev),
+    () => setHistoryOpen((prev) => !prev),
   );
 
   const { message: allTabs } = useBrowserListener<{ task: MessageTasksType; histories: any[]; tabs: any[] }>(
     MessageTasks.listTabs,
-    () => setOpen((prev) => !prev),
+    () => setTabOpen((prev) => !prev),
   );
 
   return (
     <>
-      {open && message?.histories?.length ? (
+      {historyOpen && message?.histories?.length ? (
         <CenterWrapper>
           <SearchBox
             allHistory={[...message?.histories, ...message?.tabs] || []}
-            open={open}
-            onClose={() => setOpen(false)}
+            open={historyOpen}
+            onClose={() => setHistoryOpen(false)}
           />
         </CenterWrapper>
       ) : (
+        //  : tabOpen && allTabs?.tabs?.length ? (
+        //   <CenterWrapper>
+        //     <SearchBox allHistory={[...allTabs.tabs] || []} open={tabOpen} onClose={() => setTabOpen(false)} />
+        //   </CenterWrapper>
+        // )
         <></>
       )}
     </>
