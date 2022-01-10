@@ -1,7 +1,7 @@
 import 'crx-hotreload';
 import Browser from 'webextension-polyfill';
 
-import { MessageTasks } from './util/constant';
+import { ManifestCommands, MessageTasks } from './util/constant';
 
 const uniqueArray = <T extends any>(array: T[], key: keyof T) =>
   Array.from(new Map(array.map((o) => [o[key], o])).values());
@@ -47,6 +47,18 @@ chrome.commands.onCommand.addListener(async (command) => {
         };
         chrome.tabs.sendMessage(tab.id, JSON.stringify(message));
       }
+    });
+  }
+
+  if (command === ManifestCommands.listTabs) {
+    chrome.tabs.query({ active: true, currentWindow: true }, async (tabs) => {
+      const tab = tabs[0];
+      if (!tab.id) return;
+
+      const allTabs = await Browser.tabs.query({});
+      console.log('tabs', tabs.length, tabs);
+
+      chrome.tabs.sendMessage(tab.id, JSON.stringify({ tabs: allTabs, task: MessageTasks.listTabs }));
     });
   }
 

@@ -74,6 +74,11 @@ export const BrowserHistorySearch = React.memo(() => {
     () => setOpen((prev) => !prev),
   );
 
+  const { message: allTabs } = useBrowserListener<{ task: MessageTasksType; histories: any[]; tabs: any[] }>(
+    MessageTasks.listTabs,
+    () => setOpen((prev) => !prev),
+  );
+
   return (
     <>
       {open && message?.histories?.length ? (

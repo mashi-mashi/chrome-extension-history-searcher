@@ -20,6 +20,13 @@
       },
       "description": "Run",
       "global": true
+    },
+    "list-tabs": {
+      "suggested_key": {
+        "default": "Ctrl+Shift+3",
+        "mac": "Command+Shift+L"
+      },
+      "description": "list tabs"
     }
   },
   "content_scripts": [
