@@ -104,24 +104,31 @@ export const SearchBox = React.memo<{
     [onClose],
   );
 
+  const openLink = useCallback(
+    (selected?: RowType) => {
+      if (!selected) return;
+
+      const url = selected.url;
+      const type = selected.type;
+
+      type === 'tab'
+        ? sendMessage({
+            tabId: Number(selected.id),
+          })
+        : window.open(url);
+    },
+    [sendMessage],
+  );
+
   const onEnterHandler = useCallback(
     (event) => {
       // open入れとかないとGoogle検索とかBindされる？
       if (event.keyCode === 13 && open) {
         const selected = results[selectedIndex];
-        if (!selected) return;
-
-        const url = selected.url;
-        const type = selected.type;
-
-        type === 'tab'
-          ? sendMessage({
-              tabId: Number(selected.id),
-            })
-          : window.open(url);
+        openLink(selected);
       }
     },
-    [open, results, selectedIndex, sendMessage],
+    [open, results, selectedIndex, openLink],
   );
 
   useEffect(() => {
@@ -146,7 +153,14 @@ export const SearchBox = React.memo<{
     <>
       <Flex>
         <Box sx={{ display: 'flex', alignItems: 'flex-end', width: '100%' }}>
-          <SearchIcon sx={{ mr: 1 }} />
+          <SearchIcon
+            sx={{
+              height: '1.6em',
+              width: '1.6em',
+              marginBottom: '2px', // ここでマージンはださいが
+              marginRight: '8px',
+            }}
+          />
           <TextField
             autoFocus
             // inputRef={inputRef}
@@ -181,7 +195,7 @@ export const SearchBox = React.memo<{
                       ref={index === selectedIndex ? tableRowRef : null}
                       onClick={() => {
                         setSelectedIndex(index); // 一応セレクトさせておく
-                        window.open(row.url);
+                        openLink(results[index]);
                       }}
                     >
                       <StyledTableCell>

@@ -43,7 +43,12 @@ export const BrowserHistorySearch = React.memo(() => {
       {historyOpen && message?.histories?.length ? (
         <CenterWrapper>
           <SearchBox
-            allHistory={[...message?.histories, ...message?.tabs] || []}
+            allHistory={
+              [
+                ...message?.histories,
+                //  ...message?.tabs // Tabを選択した時にアクティブウインドウじゃないと挙動がびみょいので一旦スルー
+              ] || []
+            }
             open={historyOpen}
             onClose={() => setHistoryOpen(false)}
           />
