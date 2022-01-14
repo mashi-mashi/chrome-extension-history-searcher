@@ -70,15 +70,17 @@ const StyledTableCell = withStyles({
 export const BrowserHistorySearch = React.memo(() => {
   const [historyOpen, setHistoryOpen] = useState(false);
   const [tabOpen, setTabOpen] = useState(false);
-  const { message } = useBrowserListener<{ task: MessageTasksType; histories: any[]; tabs: any[] }>(
-    MessageTasks.openApp,
-    () => setHistoryOpen((prev) => !prev),
-  );
+  const { message } = useBrowserListener<{
+    task: MessageTasksType;
+    histories: any[];
+    tabs: any[];
+  }>(MessageTasks.openApp, () => setHistoryOpen((prev) => !prev));
 
-  const { message: allTabs } = useBrowserListener<{ task: MessageTasksType; histories: any[]; tabs: any[] }>(
-    MessageTasks.listTabs,
-    () => setTabOpen((prev) => !prev),
-  );
+  const { message: allTabs } = useBrowserListener<{
+    task: MessageTasksType;
+    histories: any[];
+    tabs: any[];
+  }>(MessageTasks.listTabs, () => setTabOpen((prev) => !prev));
 
   return (
     <>
@@ -116,7 +118,7 @@ const SearchBox = React.memo<{
   const { sendMessage } = useBrowserRuntime(MessageTasks.changeTab);
 
   const [selectedIndex, setSelectedIndex] = useState(0);
-  const inputRef = useRef<HTMLInputElement>(null);
+  // const inputRef = useRef<HTMLInputElement>(null);
   const tableRowRef = useRef<HTMLTableRowElement>(null);
 
   const [searchText, setSearchText] = useState('');
@@ -178,7 +180,7 @@ const SearchBox = React.memo<{
   );
 
   useEffect(() => {
-    inputRef?.current?.focus();
+    // inputRef?.current?.focus();
     document.addEventListener('keydown', keyEventHandler, false);
 
     return () => {
@@ -201,15 +203,20 @@ const SearchBox = React.memo<{
         <Box sx={{ display: 'flex', alignItems: 'flex-end', width: '100%' }}>
           <SearchIcon sx={{ mr: 1 }} />
           <TextField
-            sx={{ fontSize: 20 }}
-            inputRef={inputRef}
+            autoFocus
+            // inputRef={inputRef}
+            sx={{
+              '& .MuiInputBase-input': {
+                fontSize: 20,
+                fontFamily: 'Noto Sans CJK JP',
+              },
+            }}
             variant="standard"
             onChange={onChangeSearchText}
             value={searchText}
             fullWidth
           />
         </Box>
-        {/* <Typography sx={{ flex: 1 }}>{`${results.length} / ${allHistory.length}`}</Typography> */}
       </Flex>
       {results.length ? (
         <>
@@ -233,7 +240,14 @@ const SearchBox = React.memo<{
                       }}
                     >
                       <StyledTableCell>
-                        <Badge sx={{ justifyContent: 'center', alignItems: 'center', width: 40, height: 40 }}>
+                        <Badge
+                          sx={{
+                            justifyContent: 'center',
+                            alignItems: 'center',
+                            width: 40,
+                            height: 40,
+                          }}
+                        >
                           <Avatar sx={{ width: 20, height: 20 }} src={`${row.faviconUrl}`} />
                         </Badge>
                       </StyledTableCell>
