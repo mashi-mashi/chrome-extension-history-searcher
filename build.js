@@ -42,11 +42,17 @@ build({
 // コピープラグインがうまく動かないので一旦自前で静的ファイルをコピー
 const copyAssets = () => {
   const DIST_PATH = './dist';
+  const targets = [
+    { from: './public/manifest.json', to: DIST_PATH + '/manifest.json' },
+    { from: './public/popup.html', to: DIST_PATH + '/popup.html' },
+    { from: './node_modules/webextension-polyfill/dist/browser-polyfill.js', to: DIST_PATH + '/browser-polyfill.js' },
+  ];
 
   if (!fs.existsSync(DIST_PATH + '/')) fs.mkdirSync(DIST_PATH + '');
-  fs.copyFileSync('./public/manifest.json', DIST_PATH + '/manifest.json');
-  fs.copyFileSync('./public/popup.html', DIST_PATH + '/popup.html');
-  fs.copyFileSync('./node_modules/webextension-polyfill/dist/browser-polyfill.js', './dist/browser-polyfill.js');
+
+  targets.forEach(({ from, to }) => {
+    fs.copyFileSync(from, to);
+  });
 };
 
 copyAssets();
