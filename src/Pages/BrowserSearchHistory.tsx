@@ -8,8 +8,8 @@ import { MessageTasks, MessageTasksType } from '../util/constant';
 
 const CenterWrapper = styled.div`
   z-index: 10000; // うーん
-  min-width: 360px;
   max-width: 720px;
+  min-width: 700px;
   max-height: 520px;
   position: fixed;
   background-color: white;
@@ -20,6 +20,7 @@ const CenterWrapper = styled.div`
   left: 30%;
   @media (max-width: 1024px) {
     left: 10%;
+    min-width: 360px;
   }
 `;
 

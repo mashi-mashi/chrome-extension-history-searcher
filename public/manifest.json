@@ -1,17 +1,11 @@
 {
   "manifest_version": 2,
-  "name": "history-searcher",
-  "description": "ddd",
+  "name": "chrome-history-searcher",
+  "description": "You can use this to search through your browser history.",
   "version": "1",
   "browser_action": {
     "default_popup": "popup.html"
   },
-  // "content_scripts": [
-  //   {
-  //     "matches": ["http://*/*", "https://*/*"],
-  //     "js": ["main.js"]
-  //   }
-  // ],
   "commands": {
     "run-searcher": {
       "suggested_key": {
@@ -21,13 +15,6 @@
       "description": "Run",
       "global": true
     }
-    // "list-tabs": {
-    //   "suggested_key": {
-    //     "default": "Ctrl+Shift+3",
-    //     "mac": "Command+Shift+L"
-    //   },
-    //   "description": "list tabs"
-    // }
   },
   "content_scripts": [
     {
@@ -43,9 +30,6 @@
     "https://*/*",
     "bookmarks"
   ],
-  // "host_permissions": [
-  //   "https://github-readme-stats.vercel.app/*"
-  // ],
   "background": {
     "scripts": ["background.js"]
   },

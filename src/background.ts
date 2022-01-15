@@ -83,6 +83,8 @@ chrome.commands.onCommand.addListener(async (command) => {
 chrome.runtime.onMessage.addListener(async (request) => {
   if (request.task === MessageTasks.changeTab) {
     const tabId = request.tabId;
+    const tab = await chrome.tabs.get(request.data.tabId);
     chrome.tabs.update(tabId, { active: true });
+    await chrome.windows.update(tab.windowId!, { focused: true });
   }
 });
