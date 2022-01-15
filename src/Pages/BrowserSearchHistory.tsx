@@ -8,8 +8,7 @@ import { MessageTasks, MessageTasksType } from '../util/constant';
 
 const CenterWrapper = styled.div`
   z-index: 10000; // うーん
-  max-width: 720px;
-  min-width: 700px;
+  width: 900px;
   max-height: 520px;
   position: fixed;
   background-color: white;
@@ -20,7 +19,7 @@ const CenterWrapper = styled.div`
   left: 30%;
   @media (max-width: 1024px) {
     left: 10%;
-    min-width: 360px;
+    width: 360px;
   }
 `;
 
@@ -47,6 +46,7 @@ export const BrowserHistorySearch = React.memo(() => {
             allHistory={
               [
                 ...message?.histories,
+                // ...message?.tabs,
                 //  ...message?.tabs // Tabを選択した時にアクティブウインドウじゃないと挙動がびみょいので一旦スルー
               ] || []
             }

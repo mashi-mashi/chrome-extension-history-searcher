@@ -4,11 +4,14 @@ import { MessageTasksType } from '../util/constant';
 
 export const useBrowserRuntime = (taskName: MessageTasksType) => {
   const sendMessage = useCallback(
-    (value: any) =>
+    async (value: any) => {
       chrome.runtime.sendMessage({
         ...value,
         task: taskName,
-      }),
+      });
+
+      return true;
+    },
     [taskName],
   );
 

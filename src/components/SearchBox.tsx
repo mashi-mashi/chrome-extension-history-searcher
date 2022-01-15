@@ -40,6 +40,7 @@ type RowType = {
 const StyledTableRow = withStyles({
   root: {
     height: 64,
+    width: '100%',
   },
 })(TableRow);
 
@@ -177,11 +178,12 @@ export const SearchBox = React.memo<{
         </Box>
       </Flex>
       {results.length ? (
-        <>
+        <div>
           <Spacer size={12} />
           <TableContainer
             sx={{
               maxHeight: 400,
+              width: '100%',
             }}
           >
             <Table>
@@ -197,26 +199,26 @@ export const SearchBox = React.memo<{
                         openLink(results[index]);
                       }}
                     >
-                      <StyledTableCell>
-                        <Badge
-                          sx={{
-                            justifyContent: 'center',
-                            alignItems: 'center',
-                            width: 40,
-                            height: 40,
-                          }}
-                        >
-                          <Avatar sx={{ width: 20, height: 20 }} src={`${row.faviconUrl}`} />
-                        </Badge>
+                      <StyledTableCell sx={{ width: 48 }}>
+                        <Avatar sx={{ width: 16, height: 16 }} src={`${row.faviconUrl}`} />
                       </StyledTableCell>
-                      <StyledTableCell>
+                      <StyledTableCell sx={{ width: 70 }}>
                         <Typography fontSize={'8px'}>{row.type}</Typography>
                       </StyledTableCell>
-                      <StyledTableCell component="th" scope="row">
+                      <StyledTableCell
+                        sx={{
+                          textOverflow: 'ellipsis',
+                          whiteSpace: 'nowrap',
+                          overflow: 'hidden',
+                          maxWidth: 0,
+                        }}
+                      >
                         <Typography fontSize={'14px'} fontWeight={'bold'}>
                           {row.title}
                         </Typography>
-                        <Typography fontSize={'8px'}>{row.url}</Typography>
+                        <Typography textOverflow={'ellipsisdwa'} fontSize={'8px'}>
+                          {row.url}
+                        </Typography>
                       </StyledTableCell>
                     </StyledTableRow>
                   );
@@ -224,7 +226,7 @@ export const SearchBox = React.memo<{
               </TableBody>
             </Table>
           </TableContainer>
-        </>
+        </div>
       ) : (
         <></>
       )}

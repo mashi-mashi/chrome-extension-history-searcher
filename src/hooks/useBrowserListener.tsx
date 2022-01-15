@@ -23,6 +23,8 @@ export const useBrowserListener = <T extends { task: MessageTasksType }>(
       callback?.();
       setMessage(message);
     }
+
+    return true;
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
