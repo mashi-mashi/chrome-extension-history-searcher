@@ -155,9 +155,8 @@ export const SearchBox = React.memo<{
         <Box sx={{ display: 'flex', alignItems: 'flex-end', width: '100%' }}>
           <SearchIcon
             sx={{
-              height: '1.6em',
-              width: '1.6em',
-              marginBottom: '2px', // ここでマージンはださいが
+              height: '1.2em',
+              width: '1.2em',
               marginRight: '8px',
             }}
           />
