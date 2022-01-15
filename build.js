@@ -40,7 +40,7 @@ build({
   .catch((e) => console.error('failed to build', e));
 
 // コピープラグインがうまく動かないので一旦自前で静的ファイルをコピー
-const copyAsses = () => {
+const copyAssets = () => {
   const DIST_PATH = './dist';
 
   if (!fs.existsSync(DIST_PATH + '/')) fs.mkdirSync(DIST_PATH + '');
@@ -49,4 +49,4 @@ const copyAsses = () => {
   fs.copyFileSync('./node_modules/webextension-polyfill/dist/browser-polyfill.js', './dist/browser-polyfill.js');
 };
 
-copyAsses();
+copyAssets();
