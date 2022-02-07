@@ -46,7 +46,7 @@ Browser.commands.onCommand.addListener(async (command) => {
         ),
         task: MessageTasks.openApp,
       };
-      Browser.tabs.sendMessage(tab.id, JSON.stringify(message));
+      chrome.tabs.sendMessage(tab.id, JSON.stringify(message));
     }
   }
 
