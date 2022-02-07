@@ -12,7 +12,8 @@
     "build": "NODE_ENV=\"production\" node ./build.js",
     "watch": "run-p watch:*",
     "watch:build": "sh -exec 'NODE_ENV=\\\"development\\\" node ./build.js'",
-    "watch:serve": "wait-on public/index.js && reload -d public -b"
+    "watch:serve": "wait-on public/index.js && reload -d public -b",
+    "fix": "prettier --write src/**/*.{ts,tsx}"
   },
   "author": "",
   "license": "MIT",

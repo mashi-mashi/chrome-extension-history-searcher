@@ -4,41 +4,41 @@ module.exports = {
     browser: true,
     es6: true,
     jest: true,
-    node: true,
+    node: true
   },
   extends: [
     'standard',
     'eslint:recommended',
     'plugin:@typescript-eslint/recommended',
     'plugin:react/recommended',
-    'prettier',
+    'prettier'
   ],
   globals: {
     Atomics: 'readonly',
-    SharedArrayBuffer: 'readonly',
+    SharedArrayBuffer: 'readonly'
   },
   parser: '@typescript-eslint/parser',
   parserOptions: {
     ecmaFeatures: {
-      jsx: true,
+      jsx: true
     },
     ecmaVersion: 2018,
-    sourceType: 'module',
+    sourceType: 'module'
   },
   plugins: ['react', 'react-hooks', '@typescript-eslint', 'prettier', 'import'],
   settings: {
     'import/resolver': {
       node: {
-        extensions: ['.js', '.jsx', '.ts', '.tsx', '.json'],
+        extensions: ['.js', '.jsx', '.ts', '.tsx', '.json']
       },
       typescript: {
         config: 'tsconfig.json',
-        alwaysTryTypes: true,
-      },
+        alwaysTryTypes: true
+      }
     },
     react: {
-      version: 'detect',
-    },
+      version: 'detect'
+    }
   },
 
   rules: {
@@ -58,26 +58,17 @@ module.exports = {
     'react/react-in-jsx-scope': 'off',
     'react/display-name': 'off',
     'no-use-before-define': 'off',
-    'prettier/prettier': [
-      'warn',
-      {
-        arrowParens: 'always',
-        printWidth: 120,
-        trailingComma: 'all',
-        singleQuote: true,
-      },
-    ],
 
     'import/order': [
       'warn',
       {
         groups: [['builtin', 'external'], 'internal', ['parent', 'index', 'sibling']],
         alphabetize: { order: 'asc' },
-        'newlines-between': 'always',
-      },
+        'newlines-between': 'always'
+      }
     ],
     'import/newline-after-import': 'warn',
-    'import/no-default-export': 'error',
+    'import/no-default-export': 'error'
     // 'import/no-internal-modules': [
     //   'error',
     //   {
@@ -88,5 +79,5 @@ module.exports = {
     //     ],
     //   },
     // ],
-  },
+  }
 };
