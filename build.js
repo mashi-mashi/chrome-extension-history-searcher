@@ -4,34 +4,37 @@ const path = require('path');
 
 const isDev = process.env.NODE_ENV === '"development"';
 
+console.log('process.env.NODE_ENV', process.env.NODE_ENV);
+
 const watchConfig = () =>
   isDev
     ? {
         onRebuild(err, result) {
           console.log(JSON.stringify(err?.errors));
           console.log(JSON.stringify(result?.warnings));
-        },
+        }
       }
     : undefined;
 
 build({
   define: {
     'process.env.NODE_ENV': process.env.NODE_ENV,
-    global: 'window',
+    NODE_ENV: process.env.NODE_ENV,
+    global: 'window'
   },
   target: 'es2015',
   platform: 'browser',
   entryPoints: {
     main: './src/index.tsx',
     content: './src/content.tsx',
-    background: './src/background.ts',
+    background: './src/background.ts'
   },
   outdir: path.resolve(__dirname, 'dist'),
   bundle: true,
   resolveExtensions: ['.js', '.ts', '.tsx'],
   minify: !isDev,
   sourcemap: isDev,
-  watch: watchConfig(),
+  watch: watchConfig()
 })
   .then(() => {
     console.log('===========================================');
@@ -45,7 +48,7 @@ const copyAssets = () => {
   const targets = [
     { from: './public/manifest.json', to: DIST_PATH + '/manifest.json' },
     { from: './public/popup.html', to: DIST_PATH + '/popup.html' },
-    { from: './node_modules/webextension-polyfill/dist/browser-polyfill.js', to: DIST_PATH + '/browser-polyfill.js' },
+    { from: './node_modules/webextension-polyfill/dist/browser-polyfill.js', to: DIST_PATH + '/browser-polyfill.js' }
   ];
 
   if (!fs.existsSync(DIST_PATH + '/')) fs.mkdirSync(DIST_PATH + '');

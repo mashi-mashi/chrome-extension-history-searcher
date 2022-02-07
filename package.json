@@ -9,11 +9,10 @@
     "test": "npx jest",
     "eslint": "eslint --cache --fix --config .eslintrc.js ./src",
     "style": "prettier --write \"src/**/*.{ts,tsx}\"",
-    "build": "NODE_ENV=\"production\" node ./build.js",
+    "build": "NODE_ENV=\\\"production\\\" node ./build.js",
     "watch": "run-p watch:*",
     "watch:build": "sh -exec 'NODE_ENV=\\\"development\\\" node ./build.js'",
-    "watch:serve": "wait-on public/index.js && reload -d public -b",
-    "fix": "prettier --write src/**/*.{ts,tsx}"
+    "watch:serve": "wait-on public/index.js && reload -d public -b"
   },
   "author": "",
   "license": "MIT",
