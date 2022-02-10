@@ -19,7 +19,7 @@ Browser.commands.onCommand.addListener(async (command) => {
     if (tab?.id) {
       const [histories, tabs] = await Promise.all([
         Browser.history?.search({ maxResults: 10000, text: '' }),
-        Browser.tabs?.query({}),
+        Browser.tabs?.query({})
       ]);
 
       const message = {
@@ -30,9 +30,9 @@ Browser.commands.onCommand.addListener(async (command) => {
             title: history.title,
             faviconUrl: createFavicon(history.url),
             visitCount: history.visitCount,
-            type: 'history',
+            type: 'history'
           })),
-          'url',
+          'url'
         ),
         tabs: uniqueArray(
           tabs.map((tab) => ({
@@ -40,11 +40,11 @@ Browser.commands.onCommand.addListener(async (command) => {
             url: tab.url,
             title: tab.title,
             faviconUrl: createFavicon(tab.url),
-            type: 'tab',
+            type: 'tab'
           })),
-          'url',
+          'url'
         ),
-        task: MessageTasks.openApp,
+        task: MessageTasks.openApp
       };
       chrome.tabs.sendMessage(tab.id, JSON.stringify(message));
     }
@@ -67,12 +67,12 @@ Browser.commands.onCommand.addListener(async (command) => {
             url: tab.url,
             title: tab.title,
             faviconUrl: createFavicon(tab.url),
-            type: 'tab',
+            type: 'tab'
           })),
-          'url',
+          'url'
         ),
-        task: MessageTasks.listTabs,
-      }),
+        task: MessageTasks.listTabs
+      })
     );
   }
 
