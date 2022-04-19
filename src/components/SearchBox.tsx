@@ -2,7 +2,6 @@ import styled from '@emotion/styled';
 import SearchIcon from '@mui/icons-material/Search';
 import {
   Avatar,
-  Badge,
   Box,
   Table,
   TableBody,
@@ -83,7 +82,7 @@ export const SearchBox = React.memo<{
   const results = useMemo(() => search(devounceValue).flatMap((d) => d.item), [devounceValue, search]);
 
   const keyEventHandler = useCallback(
-    (event) => {
+    (event: any) => {
       // Esc
       if (event.keyCode === 27) {
         onClose();
@@ -122,7 +121,7 @@ export const SearchBox = React.memo<{
   );
 
   const onEnterHandler = useCallback(
-    (event) => {
+    (event: any) => {
       // open入れとかないとGoogle検索とかBindされる？
       if (event.keyCode === 13 && open) {
         const selected = results[selectedIndex];

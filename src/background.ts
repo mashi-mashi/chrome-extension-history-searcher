@@ -3,8 +3,7 @@ import Browser from 'webextension-polyfill';
 
 import { ManifestCommands, MessageTasks } from './util/constant';
 
-const uniqueArray = <T extends any>(array: T[], key: keyof T) =>
-  Array.from(new Map(array.map((o) => [o[key], o])).values());
+const uniqueArray = <T>(array: T[], key: keyof T) => Array.from(new Map(array.map((o) => [o[key], o])).values());
 
 const createFavicon = (url?: string) =>
   url ? `https://www.google.com/s2/favicons?domain=${new URL(url).hostname}` : '';
@@ -19,7 +18,7 @@ Browser.commands.onCommand.addListener(async (command) => {
     if (tab?.id) {
       const [histories, tabs] = await Promise.all([
         Browser.history?.search({ maxResults: 10000, text: '' }),
-        Browser.tabs?.query({})
+        Browser.tabs?.query({}),
       ]);
 
       const message = {
@@ -30,9 +29,9 @@ Browser.commands.onCommand.addListener(async (command) => {
             title: history.title,
             faviconUrl: createFavicon(history.url),
             visitCount: history.visitCount,
-            type: 'history'
+            type: 'history',
           })),
-          'url'
+          'url',
         ),
         tabs: uniqueArray(
           tabs.map((tab) => ({
@@ -40,11 +39,11 @@ Browser.commands.onCommand.addListener(async (command) => {
             url: tab.url,
             title: tab.title,
             faviconUrl: createFavicon(tab.url),
-            type: 'tab'
+            type: 'tab',
           })),
-          'url'
+          'url',
         ),
-        task: MessageTasks.openApp
+        task: MessageTasks.openApp,
       };
       chrome.tabs.sendMessage(tab.id, JSON.stringify(message));
     }
@@ -67,12 +66,12 @@ Browser.commands.onCommand.addListener(async (command) => {
             url: tab.url,
             title: tab.title,
             faviconUrl: createFavicon(tab.url),
-            type: 'tab'
+            type: 'tab',
           })),
-          'url'
+          'url',
         ),
-        task: MessageTasks.listTabs
-      })
+        task: MessageTasks.listTabs,
+      }),
     );
   }
 

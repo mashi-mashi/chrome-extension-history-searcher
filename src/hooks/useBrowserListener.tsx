@@ -2,7 +2,7 @@ import { useCallback, useEffect, useState } from 'react';
 
 import { MessageTasksType } from '../util/constant';
 
-const safeParse = <T extends any>(string: string) => {
+const safeParse = <T,>(string: string) => {
   try {
     return JSON.parse(string) as T;
   } catch (e) {

@@ -1,21 +1,6 @@
-import { Theme, withStyles } from '@mui/material';
 import createTheme, { ThemeOptions as MuiThemeOptions } from '@mui/material/styles/createTheme';
 import { ComponentsOverrides } from '@mui/material/styles/overrides';
 import shadows, { Shadows } from '@mui/material/styles/shadows';
-import { WithStylesOptions, Styles } from '@mui/styles';
-
-export const customStyles = <
-  // eslint-disable-next-line @typescript-eslint/ban-types
-  Props extends object = object,
-  // eslint-disable-next-line @typescript-eslint/ban-types
-  Options extends WithStylesOptions<Theme> = {},
-  ClassKey extends string = string,
->(
-  style: Styles<Theme, Props, ClassKey>,
-  options?: Options,
-) => {
-  return withStyles(style, options);
-};
 
 const overrides: ComponentsOverrides = {
   MuiInputBase: {

@@ -45,6 +45,7 @@ export const BrowserHistorySearch = React.memo(() => {
           <SearchBox
             allHistory={
               [
+                // eslint-disable-next-line no-unsafe-optional-chaining
                 ...message?.histories,
                 // ...message?.tabs,
                 //  ...message?.tabs // Tabを選択した時にアクティブウインドウじゃないと挙動がびみょいので一旦スルー
