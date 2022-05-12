@@ -1,8 +1,7 @@
-import styled from '@emotion/styled';
-import SearchIcon from '@mui/icons-material/Search';
+import styled from "@emotion/styled";
+import SearchIcon from "@mui/icons-material/Search";
 import {
   Avatar,
-  Box,
   Table,
   TableBody,
   TableCell,
@@ -10,14 +9,21 @@ import {
   TableRow,
   TextField,
   Typography,
-} from '@mui/material';
-import { withStyles } from '@mui/styles';
-import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { useBrowserRuntime } from '../hooks/useBrowserRuntime';
-import { useDebounceValue } from '../hooks/useDebounse';
-import { useFuse } from '../hooks/useFuse';
-import { MessageTasks } from '../util/constant';
-import { Spacer } from './Spacer';
+} from "@mui/material";
+import { withStyles } from "@mui/styles";
+import React, {
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
+
+import { useBrowserRuntime } from "../hooks/useBrowserRuntime";
+import { useDebounceValue } from "../hooks/useDebounse";
+import { useFuse } from "../hooks/useFuse";
+import { MessageTasks } from "../util/constant";
+import { Spacer } from "./Spacer";
 
 const Flex = styled.div`
   display: flex;
@@ -31,14 +37,14 @@ type RowType = {
   url: string;
   title: string;
   faviconUrl: string;
-  type: 'tab' | 'history';
+  type: "tab" | "history";
   visitCount?: number;
 };
 
 const StyledTableRow = withStyles({
   root: {
     height: 64,
-    width: '100%',
+    width: "100%",
   },
 })(TableRow);
 
@@ -55,20 +61,22 @@ const CenterTextField = React.memo(
     searchText,
   }: {
     inputRef: React.RefObject<HTMLInputElement>;
-    onChangeSearchText: (event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => void;
+    onChangeSearchText: (
+      event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+    ) => void;
     searchText: string;
   }) => (
     <TextField
       autoFocus
       inputRef={inputRef}
       onBlur={() => {
-        console.log('buler!!!');
+        console.log("buler!!!");
         inputRef?.current?.focus();
       }}
       sx={{
-        '& .MuiInputBase-input': {
+        "& .MuiInputBase-input": {
           fontSize: 20,
-          fontFamily: 'Noto Sans CJK JP',
+          fontFamily: "Noto Sans CJK JP",
         },
       }}
       variant="standard"
@@ -76,7 +84,7 @@ const CenterTextField = React.memo(
       defaultValue={searchText}
       fullWidth
     />
-  ),
+  )
 );
 
 export const SearchBox = React.memo<{
@@ -85,7 +93,7 @@ export const SearchBox = React.memo<{
   onClose: () => void;
 }>(({ allHistory, open, onClose }) => {
   const { search } = useFuse<RowType>(allHistory, {
-    keys: ['url', 'title'],
+    keys: ["url", "title"],
     includeScore: true,
     isCaseSensitive: false,
     shouldSort: true,
@@ -96,45 +104,47 @@ export const SearchBox = React.memo<{
   const tableRowRef = useRef<HTMLTableRowElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
 
-  const [searchText, setSearchText] = useState('');
-  const onChangeSearchText = useCallback((event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-    const value = event.target?.value;
-    console.log('v', value);
-    inputRef?.current?.focus();
-    if (value) {
-      setSearchText(value.trim());
-      // 値を変えたらリセット
-      setSelectedIndex(0);
-    } else {
-      setSearchText('');
-    }
-  }, []);
+  const [searchText, setSearchText] = useState("");
+  const onChangeSearchText = useCallback(
+    (event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+      const value = event.target?.value;
+      inputRef?.current?.focus();
+      if (value) {
+        setSearchText(value.trim());
+        // 値を変えたらリセット
+        setSelectedIndex(0);
+      } else {
+        setSearchText("");
+      }
+    },
+    []
+  );
 
   const devounceValue = useDebounceValue(searchText, 100);
-  const results = useMemo(() => search(devounceValue).flatMap((d) => d.item), [devounceValue, search]);
-
-  const keyEventHandler = useCallback(
-    (event: any) => {
-      // Esc
-      if (event.keyCode === 27) {
-        onClose();
-        return;
-      }
-      // 下
-      if (event.keyCode === 40) {
-        setSelectedIndex((prev) => (prev < 10 ? prev + 1 : 10));
-      }
-      // 上
-      if (event.keyCode === 38) {
-        setSelectedIndex((prev) => (prev > 0 ? prev - 1 : 0));
-      }
-
-      tableRowRef.current?.scrollIntoView({
-        block: 'end',
-      });
-    },
-    [onClose],
+  const results = useMemo(
+    () => search(devounceValue).flatMap((d) => d.item),
+    [devounceValue, search]
   );
+
+  const keyEventHandler = useCallback((event: any) => {
+    // Esc
+    if (event.keyCode === 27) {
+      onClose();
+      return;
+    }
+    // 下
+    if (event.keyCode === 40) {
+      setSelectedIndex((prev) => (prev < 10 ? prev + 1 : 10));
+    }
+    // 上
+    if (event.keyCode === 38) {
+      setSelectedIndex((prev) => (prev > 0 ? prev - 1 : 0));
+    }
+
+    tableRowRef.current?.scrollIntoView({
+      block: "end",
+    });
+  }, []);
 
   const openLink = useCallback(
     (selected?: RowType) => {
@@ -143,13 +153,13 @@ export const SearchBox = React.memo<{
       const url = selected.url;
       const type = selected.type;
 
-      type === 'tab'
+      type === "tab"
         ? sendMessage({
             tabId: Number(selected.id),
           })
         : window.open(url);
     },
-    [sendMessage],
+    [sendMessage]
   );
 
   const onEnterHandler = useCallback(
@@ -160,37 +170,39 @@ export const SearchBox = React.memo<{
         openLink(selected);
       }
     },
-    [open, results, selectedIndex, openLink],
+    [open, results, selectedIndex, openLink]
   );
 
   useEffect(() => {
-    document.addEventListener('keydown', keyEventHandler, false);
+    document.addEventListener("keydown", keyEventHandler, false);
 
     return () => {
-      document.removeEventListener('keydown', keyEventHandler);
+      document.removeEventListener("keydown", keyEventHandler);
     };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [keyEventHandler]);
 
   useEffect(() => {
-    document.addEventListener('keydown', onEnterHandler);
+    document.addEventListener("keydown", onEnterHandler);
     return () => {
-      document.removeEventListener('keydown', onEnterHandler);
+      document.removeEventListener("keydown", onEnterHandler);
     };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [selectedIndex, results]);
+  }, [selectedIndex, results, onEnterHandler]);
 
   return (
     <>
       <Flex>
         <SearchIcon
           sx={{
-            height: '1.2em',
-            width: '1.2em',
-            marginRight: '8px',
+            height: "1.2em",
+            width: "1.2em",
+            marginRight: "8px",
           }}
         />
-        <CenterTextField onChangeSearchText={onChangeSearchText} searchText={searchText} inputRef={inputRef} />
+        <CenterTextField
+          onChangeSearchText={onChangeSearchText}
+          searchText={searchText}
+          inputRef={inputRef}
+        />
       </Flex>
       {results.length ? (
         <div>
@@ -198,7 +210,7 @@ export const SearchBox = React.memo<{
           <TableContainer
             sx={{
               maxHeight: 400,
-              width: '100%',
+              width: "100%",
             }}
           >
             <Table>
@@ -215,23 +227,29 @@ export const SearchBox = React.memo<{
                       }}
                     >
                       <StyledTableCell sx={{ width: 48 }}>
-                        <Avatar sx={{ width: 16, height: 16 }} src={`${row.faviconUrl}`} />
+                        <Avatar
+                          sx={{ width: 16, height: 16 }}
+                          src={`${row.faviconUrl}`}
+                        />
                       </StyledTableCell>
                       <StyledTableCell sx={{ width: 70 }}>
-                        <Typography fontSize={'8px'}>{row.type}</Typography>
+                        <Typography fontSize={"8px"}>{row.type}</Typography>
                       </StyledTableCell>
                       <StyledTableCell
                         sx={{
-                          textOverflow: 'ellipsis',
-                          whiteSpace: 'nowrap',
-                          overflow: 'hidden',
+                          textOverflow: "ellipsis",
+                          whiteSpace: "nowrap",
+                          overflow: "hidden",
                           maxWidth: 0,
                         }}
                       >
-                        <Typography fontSize={'14px'} fontWeight={'bold'}>
+                        <Typography fontSize={"14px"} fontWeight={"bold"}>
                           {row.title}
                         </Typography>
-                        <Typography textOverflow={'ellipsisdwa'} fontSize={'8px'}>
+                        <Typography
+                          textOverflow={"ellipsisdwa"}
+                          fontSize={"8px"}
+                        >
                           {row.url}
                         </Typography>
                       </StyledTableCell>

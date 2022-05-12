@@ -1,12 +1,12 @@
-import React from 'react';
-import ReactDOM from 'react-dom';
+import React from "react";
+import ReactDOM from "react-dom";
 
-import { App } from './App';
+import { App } from "./App";
 
 (() => {
-  console.log('Launch');
-  const app = document.createElement('div');
-  app.id = 'chex-root';
+  console.log("Launch");
+  const app = document.createElement("div");
+  app.id = "chex-root";
   // appendChildだとestablisconnection errorがでるので先頭にいれる
   // TODO: パフォーマンス影響調査
   document.body.prepend(app);

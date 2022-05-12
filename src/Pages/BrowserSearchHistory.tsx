@@ -1,9 +1,10 @@
-import styled from '@emotion/styled';
-import { ClickAwayListener } from '@mui/material';
-import React, { useState } from 'react';
-import { SearchBox } from '../components/SearchBox';
-import { useBrowserListener } from '../hooks/useBrowserListener';
-import { MessageTasks, MessageTasksType } from '../util/constant';
+import styled from "@emotion/styled";
+import { ClickAwayListener } from "@mui/material";
+import React, { useState } from "react";
+
+import { SearchBox } from "../components/SearchBox";
+import { useBrowserListener } from "../hooks/useBrowserListener";
+import { MessageTasks, MessageTasksType } from "../util/constant";
 
 const CenterWrapper = styled.div`
   z-index: 10000; // うーん
@@ -44,8 +45,9 @@ export const BrowserHistorySearch = React.memo(() => {
           <SearchBox
             allHistory={
               [
-                ...message?.histories,
-                ...message?.tabs,
+                ...(message?.histories ?? []),
+
+                ...(message?.tabs ?? []),
                 //  ...message?.tabs // Tabを選択した時にアクティブウインドウじゃないと挙動がびみょいので一旦スルー
               ] || []
             }
