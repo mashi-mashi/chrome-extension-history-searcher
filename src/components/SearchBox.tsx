@@ -70,7 +70,6 @@ const CenterTextField = React.memo(
       autoFocus
       inputRef={inputRef}
       onBlur={() => {
-        console.log("buler!!!");
         inputRef?.current?.focus();
       }}
       sx={{
