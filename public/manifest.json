@@ -2,7 +2,7 @@
   "manifest_version": 3,
   "name": "chrome-history-searcher",
   "description": "You can use this to search through your browser history.",
-  "version": "1",
+  "version": "2",
   "action": {
     "default_popup": "popup.html"
   },

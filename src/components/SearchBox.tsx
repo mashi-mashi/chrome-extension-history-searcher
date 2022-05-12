@@ -13,7 +13,6 @@ import {
 } from '@mui/material';
 import { withStyles } from '@mui/styles';
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-
 import { useBrowserRuntime } from '../hooks/useBrowserRuntime';
 import { useDebounceValue } from '../hooks/useDebounse';
 import { useFuse } from '../hooks/useFuse';
@@ -49,6 +48,37 @@ const StyledTableCell = withStyles({
   },
 })(TableCell);
 
+const CenterTextField = React.memo(
+  ({
+    onChangeSearchText,
+    inputRef,
+    searchText,
+  }: {
+    inputRef: React.RefObject<HTMLInputElement>;
+    onChangeSearchText: (event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => void;
+    searchText: string;
+  }) => (
+    <TextField
+      autoFocus
+      inputRef={inputRef}
+      onBlur={() => {
+        console.log('buler!!!');
+        inputRef?.current?.focus();
+      }}
+      sx={{
+        '& .MuiInputBase-input': {
+          fontSize: 20,
+          fontFamily: 'Noto Sans CJK JP',
+        },
+      }}
+      variant="standard"
+      onChange={onChangeSearchText}
+      defaultValue={searchText}
+      fullWidth
+    />
+  ),
+);
+
 export const SearchBox = React.memo<{
   allHistory: RowType[];
   open: boolean;
@@ -60,15 +90,17 @@ export const SearchBox = React.memo<{
     isCaseSensitive: false,
     shouldSort: true,
   });
-  const { sendMessage } = useBrowserRuntime(MessageTasks.changeTab);
 
+  const { sendMessage } = useBrowserRuntime(MessageTasks.changeTab);
   const [selectedIndex, setSelectedIndex] = useState(0);
-  // const inputRef = useRef<HTMLInputElement>(null);
   const tableRowRef = useRef<HTMLTableRowElement>(null);
+  const inputRef = useRef<HTMLInputElement>(null);
 
   const [searchText, setSearchText] = useState('');
   const onChangeSearchText = useCallback((event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const value = event.target?.value;
+    console.log('v', value);
+    inputRef?.current?.focus();
     if (value) {
       setSearchText(value.trim());
       // 値を変えたらリセット
@@ -132,7 +164,6 @@ export const SearchBox = React.memo<{
   );
 
   useEffect(() => {
-    // inputRef?.current?.focus();
     document.addEventListener('keydown', keyEventHandler, false);
 
     return () => {
@@ -152,29 +183,14 @@ export const SearchBox = React.memo<{
   return (
     <>
       <Flex>
-        <Box sx={{ display: 'flex', alignItems: 'flex-end', width: '100%' }}>
-          <SearchIcon
-            sx={{
-              height: '1.2em',
-              width: '1.2em',
-              marginRight: '8px',
-            }}
-          />
-          <TextField
-            autoFocus
-            // inputRef={inputRef}
-            sx={{
-              '& .MuiInputBase-input': {
-                fontSize: 20,
-                fontFamily: 'Noto Sans CJK JP',
-              },
-            }}
-            variant="standard"
-            onChange={onChangeSearchText}
-            value={searchText}
-            fullWidth
-          />
-        </Box>
+        <SearchIcon
+          sx={{
+            height: '1.2em',
+            width: '1.2em',
+            marginRight: '8px',
+          }}
+        />
+        <CenterTextField onChangeSearchText={onChangeSearchText} searchText={searchText} inputRef={inputRef} />
       </Flex>
       {results.length ? (
         <div>

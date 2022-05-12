@@ -1,26 +1,21 @@
 import styled from '@emotion/styled';
 import { ClickAwayListener } from '@mui/material';
 import React, { useState } from 'react';
-
 import { SearchBox } from '../components/SearchBox';
 import { useBrowserListener } from '../hooks/useBrowserListener';
 import { MessageTasks, MessageTasksType } from '../util/constant';
 
 const CenterWrapper = styled.div`
   z-index: 10000; // うーん
-  width: 900px;
+  min-width: 900px;
   max-height: 520px;
   position: fixed;
   background-color: white;
   border: 1.5px solid #d3d3d3;
   padding: 20px;
   border-radius: 12px;
-  top: 10%;
-  left: 30%;
-  @media (max-width: 1024px) {
-    left: 10%;
-    width: 360px;
-  }
+  top: calc(50% - 520px / 2);
+  left: calc(50% - 900px / 2);
 `;
 
 export const BrowserHistorySearch = React.memo(() => {
@@ -39,28 +34,28 @@ export const BrowserHistorySearch = React.memo(() => {
   // }>(MessageTasks.listTabs, () => setTabOpen((prev) => !prev));
 
   return (
-    <ClickAwayListener onClickAway={() => setHistoryOpen(false)}>
+    <ClickAwayListener
+      onClickAway={(e) => {
+        // setHistoryOpen(false);
+      }}
+    >
       {historyOpen && message?.histories?.length ? (
         <CenterWrapper>
           <SearchBox
             allHistory={
               [
-                // eslint-disable-next-line no-unsafe-optional-chaining
                 ...message?.histories,
-                // ...message?.tabs,
+                ...message?.tabs,
                 //  ...message?.tabs // Tabを選択した時にアクティブウインドウじゃないと挙動がびみょいので一旦スルー
               ] || []
             }
             open={historyOpen}
-            onClose={() => setHistoryOpen(false)}
+            onClose={() => {
+              setHistoryOpen(false);
+            }}
           />
         </CenterWrapper>
       ) : (
-        //  : tabOpen && allTabs?.tabs?.length ? (
-        //   <CenterWrapper>
-        //     <SearchBox allHistory={[...allTabs.tabs] || []} open={tabOpen} onClose={() => setTabOpen(false)} />
-        //   </CenterWrapper>
-        // )
         <></>
       )}
     </ClickAwayListener>
